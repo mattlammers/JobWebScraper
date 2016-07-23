@@ -30,9 +30,10 @@ def simply_scraper(url):
 
         for job in soup.find_all(True, {'class':'card js-job'}):
             jobTitle = job.find(True, {'class':'serp-title'}).text
+            href = 'http://www.simplyhired.com' + job.find(True, {'class':'card-link js-job-link'}).get('href')
             jobCompany = job.find(True, {'class':'serp-company'}).text.strip()
             jobLocation = job.find(True, {'class':'serp-location'}).text.strip()
-            results = results + '{0}\n{1}  {2}\n'.format(jobTitle, jobCompany, jobLocation) + '\n'
+            results = results + '{0}\n{1}  {2}\n{3}\n'.format(jobTitle, jobCompany, jobLocation, href) + '\n'
     else:
         print('Simply Hired Error Code:{0}'.format(urlHtml.getcode()))
 
