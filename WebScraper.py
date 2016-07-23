@@ -1,4 +1,5 @@
 from bs4 import BeautifulSoup
+import smtplib
 import urllib
 
 def indeed_scraper(url):
@@ -41,7 +42,7 @@ def simply_scraper(url):
 
 results = ''
 
-urlList = ["http://www.indeed.com/jobs?sort=date&jt=fulltime&q=software+engineer&l=Longmont%2C+CO&radius=15",
+urlList = ["http://www.indeed.com/jobs?sort=date&jt=fulltime&q=software+engineer&l=Longmont%2C+CO&radius=20",
            "http://www.simplyhired.com/search?q=software+engineer&l=longmont%2C+co&fdb=1&sb=dd"]
 
 for urls in urlList:
@@ -50,4 +51,9 @@ for urls in urlList:
     elif "www.simplyhired.com" in urls:
         results = results + simply_scraper(urls)
 
-print(results)
+emailSmtp = smtplib.SMTP('smtp.gmail.com', 587)
+emailSmtp.starttls()
+emailSmtp.login('GMAIL ACCOUNT EMAIL', 'GMAIL ACCOUNT PASSWORD')
+
+emailSmtp.sendmail('YOUR EMAIL ADDRESS', 'EMAIL ADDRESS TO SEND TO', results)
+emailSmtp.quit()
