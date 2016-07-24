@@ -16,7 +16,7 @@ def indeed_scraper(url):
             location = job.find(True, {'itemprop':'addressLocality'}).text
             results = ''.join([results, jobTitle, '\n', companyName, '  ', location, '\n', href, '\n\n'])
     else:
-        print('Indeed.com Error Code:{0}'.format(urlHtml.getcode()))
+        print('Indeed.com Error Code: ' + urlHtml.getcode())
     
     return results
 
@@ -34,7 +34,7 @@ def simply_scraper(url):
             jobLocation = job.find('span', 'serp-location').text.strip()
             results = ''.join([results, jobTitle, '\n', jobCompany, '  ', jobLocation, '\n', href, '\n\n'])
     else:
-        print('Simply Hired Error Code:{0}'.format(urlHtml.getcode()))
+        print('Simply Hired Error Code: ' + urlHtml.getcode())
 
     return results
 
