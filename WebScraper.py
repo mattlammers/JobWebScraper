@@ -14,7 +14,7 @@ def indeed_scraper(url):
             href = 'http://www.indeed.com' + job.find('a', 'turnstileLink').get('href')
             companyName = job.find(True, {'itemprop':'name'}).text.strip()
             location = job.find(True, {'itemprop':'addressLocality'}).text
-            results = results + '{0}\n{1}  {2}\n{3}\n'.format(jobTitle, companyName, location, href) + '\n'
+            results = ''.join([results, jobTitle, '\n', companyName, '  ', location, '\n', href, '\n\n'])
     else:
         print('Indeed.com Error Code:{0}'.format(urlHtml.getcode()))
     
@@ -32,20 +32,34 @@ def simply_scraper(url):
             href = 'http://www.simplyhired.com' + job.find('a', 'card-link js-job-link').get('href')
             jobCompany = job.find('span', 'serp-company').text.strip()
             jobLocation = job.find('span', 'serp-location').text.strip()
-            results = results + '{0}\n{1}  {2}\n{3}\n'.format(jobTitle, jobCompany, jobLocation, href) + '\n'
+            results = ''.join([results, jobTitle, '\n', jobCompany, '  ', jobLocation, '\n', href, '\n\n'])
     else:
         print('Simply Hired Error Code:{0}'.format(urlHtml.getcode()))
 
     return results
 
-results = ''
-           
-results = results + indeed_scraper("http://www.indeed.com/jobs?q=software+engineer&l=Longmont,+CO&radius=20&sort=date")
-results = results + simply_scraper("http://www.simplyhired.com/search?q=software+engineer&l=longmont%2C+co&fdb=1&sb=dd")
+#Get user input for job user wants to search for and format properly to be inserted into the urls
+inputJob = raw_input('Enter job to search for:').strip()
+inputJob = inputJob.lower()
+inputJob = inputJob.replace(' ', '+')
 
+#Get user input for location user wants to search and parse into array
+inputLocation = raw_input('Enter location to search for using the format City, State abbreviation:').split(', ')
+
+#Formatting the urls based on user given search parameters
+indeedUrl = ''.join(['http://www.indeed.com/jobs?q=', inputJob, '&l=', inputLocation[0], ',+', inputLocation[1].upper(), '&radius=20&sort=date'])
+simplyUrl = ''.join(['http://www.simplyhired.com/search?q=', inputJob, '&l=', inputLocation[0], '%2C+', inputLocation[1], '&mi=25&fdb=1&sb=dd'])
+
+#Start getting results and creating string with results from our BeautifulSoup parsing
+results = ''
+
+results = results + indeed_scraper(indeedUrl)
+results = results + simply_scraper(simplyUrl)
+
+#Send email to gmail accounts with body containing the results of the search
 emailSmtp = smtplib.SMTP('smtp.gmail.com', 587)
 emailSmtp.starttls()
-emailSmtp.login('YOUR EMAIL ADDRESS', 'YOUR EMAIL PASSWORD')
+emailSmtp.login('YOUR EMAIL ADDRESS', 'EMAIL PASSWORD')
 
-emailSmtp.sendmail('YOUR EMAIL ADDRESS', 'RECEIVING ADDRESS', results)
+emailSmtp.sendmail('SENDING EMAIL ADDRESS', 'RECEIVING EMAIL ADDRESS', results)
 emailSmtp.quit()
